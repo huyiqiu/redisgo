@@ -18,7 +18,7 @@ type EchoHandler struct {
 	closing    atomic.Boolean
 }
 
-func MakeHandler() *EchoHandler {
+func MakeHandler() *EchoHandler {// 新建一个Handler
 	return &EchoHandler{}
 }
 
