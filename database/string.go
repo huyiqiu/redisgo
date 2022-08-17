@@ -3,6 +3,7 @@ package database
 import (
 	"redisgo/interface/database"
 	"redisgo/interface/redis"
+	"redisgo/lib/utils"
 	"redisgo/redis/reply"
 )
 
@@ -41,6 +42,7 @@ func execSet(db *DB, args [][]byte) redis.Reply {
 		Data: value,
 	}
 	db.PutEntity(key, entity)
+	db.addAof(utils.ToCmdLine2("set", args...))
 	return &reply.OKReply{}
 }
 
@@ -49,6 +51,7 @@ func execSetNX(db *DB, args [][]byte) redis.Reply {
 	key := string(args[0])
 	entity := &database.DataEntity{Data: args[1]}
 	result := db.PutIfAbsent(key, entity)
+	db.addAof(utils.ToCmdLine2("setnx", args...))
 	return reply.MakeIntReply(int64(result))
 } 
 
@@ -63,6 +66,7 @@ func execGetSet(db *DB, args [][]byte) redis.Reply {
 		return reply.MakeNullBulkReply()
 	}
 	old := entity.Data.([]byte)
+	db.addAof(utils.ToCmdLine2("getset", args...))
 	return reply.MakeBulkReply(old)
 }
 

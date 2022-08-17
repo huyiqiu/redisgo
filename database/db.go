@@ -12,6 +12,7 @@ import (
 type DB struct {
 	index int
 	data  dict.Dict
+	addAof func(CmdLine)
 }
 
 // CmdLine is alias for [][]byte, represents a command line

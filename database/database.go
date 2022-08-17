@@ -1,6 +1,7 @@
 package database
 
 import (
+	"redisgo/aof"
 	"redisgo/config"
 	"redisgo/interface/redis"
 	"redisgo/lib/logger"
@@ -11,6 +12,7 @@ import (
 
 type Database struct { // 核心
 	dbSet []*DB
+	aofHandler *aof.AofHandler
 }
 
 func NewDataBase() *Database {
@@ -25,6 +27,20 @@ func NewDataBase() *Database {
 		db := makeDB()
 		db.index = i
 		database.dbSet[i] = db
+	}
+
+	if config.Properties.AppendOnly {
+		aofHandler, err := aof.NewAOFHandler(database)
+		if err != nil {
+			panic(err)
+		}
+		database.aofHandler = aofHandler
+		for _, db := range database.dbSet {
+			singleDB := db // 局部变量，避免闭包
+			singleDB.addAof = func (cmdline CmdLine)  {
+				database.aofHandler.AddAof(singleDB.index, cmdline)
+			}
+		}
 	}
 	return database
 }

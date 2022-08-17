@@ -46,6 +46,7 @@ func (c *Connection) SelectDB(dbNum int) {
 	c.selectedDB = dbNum
 }
 
+// 写的时候上锁
 func (c *Connection) Write(b []byte) error {
 	if len(b) == 0 {
 		return nil
