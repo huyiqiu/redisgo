@@ -27,9 +27,9 @@ type Handler struct {
 
 // MakeHandler creates a Handler instance
 func MakeHandler() *Handler {
-	var db database.Database
+	// var db database.Database
 	// db = database2.NewEchoDatabase() // test
-	db = database2.NewDataBase()
+	db := database2.NewDataBase()
 	return &Handler{db: db}
 }
 
