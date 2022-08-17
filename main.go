@@ -5,6 +5,7 @@ import (
 	"os"
 	"redisgo/config"
 	"redisgo/lib/logger"
+	"redisgo/redis/handler"
 	"redisgo/tcp"
 )
 
@@ -38,7 +39,7 @@ func main() {
 		&tcp.Config{
 			Address: fmt.Sprintf("%s:%d", config.Properties.Bind, config.Properties.Port),
 		},
-		tcp.MakeHandler(),
+		handler.MakeHandler(),
 	)
 
 	if err != nil {

@@ -183,21 +183,22 @@ func readLine(bufReader *bufio.Reader, state *readState) ([]byte, bool, error) {
 			return nil, true, err
 		}
 		if len(msg) == 0 || msg[len(msg)-2] != '\r' { // 倒数第二个不为'/r'则错误
-			return nil, false, errors.New("protocol error 协议错误 :" + string(msg))
+			return nil, false, errors.New("protocol error:" + string(msg))
 		}
-	}
+	} else {
+		msg = make([]byte, state.bulkLen + 2)    //
+		_, err2 := io.ReadFull(bufReader, msg) //将buffer中的消息都读到msg中
+		if err != nil {
+			return nil, true, err2
+		}
 
-	// 2. $后有数字，读取字符个数
-	msg = make([]byte, state.bulkLen+2)    //
-	_, err2 := io.ReadFull(bufReader, msg) //将buffer中的消息都读到msg中
-	if err != nil {
-		return nil, true, err2
+		if len(msg) == 0 || 
+			msg[len(msg)-2] != '\r' || 
+			msg[len(msg)-1] != '\n' {
+			return nil, false, errors.New("protocol error:" + string(msg))
+		}
+		state.bulkLen = 0
 	}
-
-	if len(msg) == 0 || msg[len(msg)-1] != '\n' || msg[len(msg)-2] != '\r' {
-		return nil, false, errors.New("protocol error 协议错误 :" + string(msg))
-	}
-	state.bulkLen = 0 //
 
 	return msg, false, nil
 }

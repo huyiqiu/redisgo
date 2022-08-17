@@ -1,0 +1,9 @@
+[INFO][server.go:34] 2022/08/17 14:12:45 bind: 0.0.0.0:6379, start listening
+[INFO][server.go:62] 2022/08/17 14:12:54 accept link
+[ERROR][handler.go:80] 2022/08/17 14:13:59 require multi bulk protocol
+[ERROR][handler.go:80] 2022/08/17 14:13:59 require multi bulk protocol
+[ERROR][handler.go:80] 2022/08/17 14:16:57 require multi bulk protocol
+[ERROR][handler.go:80] 2022/08/17 14:16:57 require multi bulk protocol
+[INFO][handler.go:60] 2022/08/17 14:21:55 connection closed:127.0.0.1:10880
+[INFO][server.go:45] 2022/08/17 14:21:59 shutting down...
+[INFO][handler.go:94] 2022/08/17 14:21:59 handler shutting down...

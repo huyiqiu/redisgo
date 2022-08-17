@@ -8,21 +8,21 @@ import (
 )
 
 type Connection struct {
-
-	conn         net.Conn
+	conn net.Conn
 	// waiting until protocol finished
 	waitingReply wait.Wait
 	// lock while server sending response
-	mu           sync.Mutex
+	mu sync.Mutex
 	// selected db
-	selectedDB     int
+	selectedDB int
 }
 
-func (c *Connection) NewConn(conn net.Conn) *Connection {
+func NewConn(conn net.Conn) *Connection {
 	return &Connection{
 		conn: conn,
 	}
 }
+
 // RemoteAddr returns the remote network address
 // 返回远程ip地址
 func (c *Connection) RemoteAddr() net.Addr {
@@ -40,6 +40,7 @@ func (c *Connection) Close() error {
 func (c *Connection) GetDBIndex() int {
 	return c.selectedDB
 }
+
 // SelectDB selects a database
 func (c *Connection) SelectDB(dbNum int) {
 	c.selectedDB = dbNum
@@ -51,12 +52,11 @@ func (c *Connection) Write(b []byte) error {
 	}
 	c.mu.Lock()
 	c.waitingReply.Add(1)
-	defer func ()  {
+	defer func() {
 		c.waitingReply.Done()
-		c.mu.Unlock()	
+		c.mu.Unlock()
 	}()
 
 	_, err := c.conn.Write(b)
 	return err
 }
-
