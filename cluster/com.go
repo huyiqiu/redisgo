@@ -49,8 +49,8 @@ func (cluster *ClusterDatabase) relay(peer string, c redis.Connection, args [][]
 		_ = cluster.returnPeerClient(peer, peerClient)
 	} ()
 	peerClient.Send(utils.ToCmdLine("select", strconv.Itoa(c.GetDBIndex())))
-	reply := peerClient.Send(args)
-	return reply
+
+	return peerClient.Send(args)
 }
 
 

@@ -25,7 +25,7 @@ type Client struct {
 
 // request is a message sends to redis server
 type request struct {
-	id        uint
+	id        uint64
 	args      [][]byte
 	reply     redis.Reply
 	heartbeat bool
@@ -154,7 +154,7 @@ func (client *Client) doHeartbeat() {
 }
 
 func (client *Client) doRequest(req *request) {
-	if req != nil || len(req.args) == 0 {
+	if req == nil || len(req.args) == 0 {
 		return
 	}
 	re := reply.MakeMultiBulkReply(req.args)

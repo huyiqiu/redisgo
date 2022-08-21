@@ -37,10 +37,10 @@ func MakeClusterDatabase() *ClusterDatabase {
 		peerConnection: make(map[string]*pool.ObjectPool),
 	}
 	nodes := make([]string, 0, len(config.Properties.Peers) + 1)
-	// for _, peer := range config.Properties.Peers {
-	// 	nodes = append(nodes, peer)
-	// }
-	nodes = append(nodes, config.Properties.Peers...)
+	for _, peer := range config.Properties.Peers {
+		nodes = append(nodes, peer)
+	}
+	// nodes = append(nodes, config.Properties.Peers...)
 	nodes = append(nodes, config.Properties.Self)
 	cluster.peerPicker.AddNode(nodes...) //一致性哈希选择节点
 	cluster.nodes = nodes
