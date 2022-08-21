@@ -94,11 +94,10 @@ func (handler *AofHandler) LoadAof() {
 	payloads := parser.ParseStream(file)
 	// only used for save dbIndex
 	fakeConn := &connection.Connection{}
-
+	logger.Info("LoadAof...")
 	for p := range payloads {
 		if p.Err != nil {
 			if p.Err == io.EOF {
-				logger.Info("end of file")
 				break
 			}
 			logger.Error(p.Err)

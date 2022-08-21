@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-type Database struct { // 核心
-	dbSet []*DB
+type StandaloneDatabase struct { // 核心
+	dbSet      []*DB
 	aofHandler *aof.AofHandler
 }
 
-func NewDataBase() *Database {
-	database := &Database{}
+func NewStandaloneDataBase() *StandaloneDatabase {
+	database := &StandaloneDatabase{}
 	if config.Properties.Databases == 0 {
 		config.Properties.Databases = 16
 	}
-	
+
 	database.dbSet = make([]*DB, config.Properties.Databases)
 	// 初始化DB
 	for i := range database.dbSet {
@@ -37,7 +37,7 @@ func NewDataBase() *Database {
 		database.aofHandler = aofHandler
 		for _, db := range database.dbSet {
 			singleDB := db // 局部变量，避免闭包
-			singleDB.addAof = func (cmdline CmdLine)  {
+			singleDB.addAof = func(cmdline CmdLine) {
 				database.aofHandler.AddAof(singleDB.index, cmdline)
 			}
 		}
@@ -45,7 +45,7 @@ func NewDataBase() *Database {
 	return database
 }
 
-func (database *Database) Exec(client redis.Connection, args [][]byte) redis.Reply {
+func (database *StandaloneDatabase) Exec(client redis.Connection, args [][]byte) redis.Reply {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error(err)
@@ -65,18 +65,16 @@ func (database *Database) Exec(client redis.Connection, args [][]byte) redis.Rep
 	return db.Exec(client, args)
 }
 
-
-func (database *Database) Close() {
+func (database *StandaloneDatabase) Close() {
 
 }
 
-
-func (database *Database) AfterClientClose(c redis.Connection) {
+func (database *StandaloneDatabase) AfterClientClose(c redis.Connection) {
 
 }
 
 // 执行select命令
-func execSelect(c redis.Connection, database *Database, args [][]byte) redis.Reply {
+func execSelect(c redis.Connection, database *StandaloneDatabase, args [][]byte) redis.Reply {
 	dbIndex, err := strconv.Atoi(string(args[0]))
 	if err != nil {
 		return reply.MakeErrReply("ERR invalid DB index")

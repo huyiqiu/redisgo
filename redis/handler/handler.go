@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"net"
+	"redisgo/cluster"
+	"redisgo/config"
 	database2 "redisgo/database"
 	"redisgo/interface/database"
 	"redisgo/lib/logger"
@@ -27,9 +29,13 @@ type Handler struct {
 
 // MakeHandler creates a Handler instance
 func MakeHandler() *Handler {
-	// var db database.Database
+	var db database.Database
 	// db = database2.NewEchoDatabase() // test
-	db := database2.NewDataBase()
+	if config.Properties.Self != "" && len(config.Properties.Peers) > 0 {
+		db = cluster.MakeClusterDatabase() // 集群
+	} else {
+		db = database2.NewStandaloneDataBase() // 单机
+	}
 	return &Handler{db: db}
 }
 
